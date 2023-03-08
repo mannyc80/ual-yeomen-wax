@@ -1,4 +1,4 @@
-# UAL WAX Cloud Wallet
+# UAL WAX - My Cloud Wallet
 
 UAL authenticator for WAX - My Cloud Wallet.
 
