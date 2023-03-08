@@ -1,6 +1,6 @@
 # UAL WAX Cloud Wallet
 
-UAL authenticator for WAX Cloud Wallet.
+UAL authenticator for WAX - My Cloud Wallet.
 
 ## Install
 ```bash
