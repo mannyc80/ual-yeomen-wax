@@ -4,5 +4,5 @@ UAL authenticator for WAX Cloud Wallet.
 
 ## Install
 ```bash
-~ yarn add @eosdacio/ual-wax
+~ yarn add @yeomen/ual-yeomen-wax
 ```
