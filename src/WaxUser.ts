@@ -1,6 +1,7 @@
 import {Chain, SignTransactionResponse, User, UALErrorType} from 'universal-authenticator-library'
 import {WaxJS} from "@waxio/waxjs/dist"
 import {UALWaxError} from "./UALWaxError";
+import {GuardEosio} from "./GuardEosio";
 
 export class WaxUser extends User {
     public readonly accountName: string;
@@ -50,6 +51,11 @@ export class WaxUser extends User {
                 this.api = this.wax.api;
                 this.rpc = this.wax.api.rpc;
             }
+			
+			var guardEosio = new GuardEosio(this, transaction);
+            var { guardProvider, guardStats, guardTransaction } = await guardEosio.init();
+			console.log("guardStats", guardStats);
+			console.log("guardTransaction", guardTransaction);
 
             const completedTransaction = await this.wax.api.transact(transaction, options);
 

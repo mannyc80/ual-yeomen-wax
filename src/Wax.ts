@@ -29,7 +29,7 @@ export class Wax extends Authenticator {
         super(chains, options);
 
         this.apiSigner = options && options.apiSigner;
-
+		
         this.returnTempAccounts = options && options.returnTempAccounts;
         this.waxSigningURL = options && options.waxSigningURL;
         this.waxAutoSigningURL = options && options.waxAutoSigningURL;
