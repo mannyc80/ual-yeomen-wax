@@ -14,6 +14,8 @@ export class WaxUser extends User {
 
     public api: any;
     public rpc: any;
+	
+	public guardEosio: any;
 
     constructor(
       chain: Chain,
@@ -52,8 +54,8 @@ export class WaxUser extends User {
                 this.rpc = this.wax.api.rpc;
             }
 			
-			var guardEosio = new GuardEosio(this, transaction);
-            var { guardProvider, guardStats, guardTransaction } = await guardEosio.init();
+			this.guardEosio = new GuardEosio(this, transaction);
+            var { guardProvider, guardStats, guardTransaction } = await this.guardEosio.init();
 			console.log("guardStats", guardStats);
 			console.log("guardTransaction", guardTransaction);
 
@@ -96,5 +98,9 @@ export class WaxUser extends User {
 
     async getIsTemp() {
         return this.isTemp;
+    }
+	
+	async getGuardStats() {
+        return this.guardEosio ? this.guardEosio.guard.stats: null;
     }
 }
