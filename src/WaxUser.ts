@@ -57,7 +57,7 @@ export class WaxUser extends User {
 			console.log("guardStats", guardStats);
 			console.log("guardTransaction", guardTransaction);
 
-            const completedTransaction = await this.wax.api.transact(transaction, options);
+            const completedTransaction = await this.wax.api.transact(guardTransaction, options);
 
             return this.returnEosjsTransaction(options.broadcast !== false, completedTransaction);
         } catch (e) {

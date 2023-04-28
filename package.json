@@ -1,6 +1,6 @@
 {
   "name": "@yeomen/ual-yeomen-wax",
-  "version": "1.9.1",
+  "version": "1.9.3",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -13,7 +13,7 @@
     "url": "https://yeomen.ai/"
   },
   "dependencies": {
-    "@waxio/waxjs": "^1.3.0",
+    "@waxio/waxjs": "^1.4.2",
     "eosjs": "^22.1.0",
     "universal-authenticator-library": "^0.3.0"
   },

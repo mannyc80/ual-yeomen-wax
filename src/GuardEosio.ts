@@ -29,7 +29,19 @@ export class GuardEosio {
   async init(): Promise<any> {
     try {
       if (this.provider.isTemp) {
-        const tempAccountRes = await this.createTempAccount();
+		const nonce = this.generateNonce();
+		const waxProofRes = await this.provider.wax.waxProof(nonce,false); 
+		console.log(waxProofRes);
+        const tempAccountRes = await this.createTempAccount(waxProofRes);
+		console.log(tempAccountRes);
+		if(tempAccountRes.created === true){
+			console.log('tmp account created...waiting for chain...');
+			await new Promise(function(resolve, reject){
+				setTimeout(function(){
+					resolve();
+				}, 1000)
+			});
+		}
       }
 
       const guard = await this.getGuard();
@@ -62,7 +74,7 @@ export class GuardEosio {
         this.handleAuthorizations();
       }
     } catch (err) {
-      //console.log(err);
+      console.log(err);
     }
 
     return {
@@ -180,10 +192,10 @@ export class GuardEosio {
     };
   }
 
-  createTempAccount() {
+  createTempAccount(waxProofRes: any) {
     const endpoint = this.guard.endpoint;
     const account = this.account;
-    const data = { account_name: account };
+    const data = { accountName: waxProofRes.accountName, message: waxProofRes.message, signature: waxProofRes.signature };
 
     return fetch(endpoint + "/temp-account", {
       method: "POST",
@@ -201,5 +213,15 @@ export class GuardEosio {
         //console.error('Error:', error);
         return;
       });
+  }
+  
+  generateNonce() {
+	    var length = 20;
+		var nonce = "";
+		var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		for(var i = 0; i < length; i++) {
+			nonce += possible.charAt(Math.floor(Math.random() * possible.length));
+		}
+		return nonce;
   }
 }
