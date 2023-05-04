@@ -195,7 +195,11 @@ export class GuardEosio {
   createTempAccount(waxProofRes: any) {
     const endpoint = this.guard.endpoint;
     const account = this.account;
-    const data = { accountName: waxProofRes.accountName, message: waxProofRes.message, signature: waxProofRes.signature };
+	
+	const code = this.getCookie('temp-account:code') || null;
+	
+    const data = { accountName: waxProofRes.accountName, message: waxProofRes.message, signature: waxProofRes.signature, code: code };
+	
 
     return fetch(endpoint + "/temp-account", {
       method: "POST",
@@ -224,4 +228,20 @@ export class GuardEosio {
 		}
 		return nonce;
   }
+  
+  getCookie(cname: string) {
+	  let name = cname + "=";
+	  let decodedCookie = decodeURIComponent(document.cookie);
+	  let ca = decodedCookie.split(';');
+	  for(let i = 0; i <ca.length; i++) {
+		let c = ca[i];
+		while (c.charAt(0) == ' ') {
+		  c = c.substring(1);
+		}
+		if (c.indexOf(name) == 0) {
+		  return c.substring(name.length, c.length);
+		}
+	  }
+	  return "";
+	}
 }
