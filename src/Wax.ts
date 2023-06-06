@@ -7,8 +7,10 @@ import { WaxUser } from './WaxUser'
 import { WaxIcon } from './WaxIcon'
 import { UALWaxError } from './UALWaxError'
 
+const STORED_SESSION_KEY = 'ual-wax:autologin'
+
 export class Wax extends Authenticator {
-  private wax?: WaxJS
+  private wax?: WaxJS | null
   private users: WaxUser[] = []
 
   private initiated = false
@@ -45,16 +47,18 @@ export class Wax extends Authenticator {
    * Called after `shouldRender` and should be used to handle any async actions required to initialize the authenticator
    */
   async init(): Promise<void> {
-    this.initWaxJS()
+    const data = JSON.parse(localStorage.getItem(STORED_SESSION_KEY) || 'null')
+    const HAS_VALID_SESSION = data && data.expire >= Date.now()
+    if (HAS_VALID_SESSION) {
+      this.initWaxJS(data.userAccount, data.pubKeys)
+    } else this.initWaxJS()
 
     try {
       if (this.wax) {
         if (await this.wax.isAutoLoginAvailable()) {
           this.receiveLogin()
         } else {
-          const data = JSON.parse(localStorage.getItem('ual-wax:autologin') || 'null')
-
-          if (data && data.expire >= Date.now()) {
+          if (HAS_VALID_SESSION) {
             this.receiveLogin(data.userAccount, data.pubKeys, data?.isTemp || false)
           }
         }
@@ -214,11 +218,10 @@ export class Wax extends Authenticator {
    * Logs the user out of the dapp. This will be strongly dependent on each Authenticator app's patterns.
    */
   async logout(): Promise<void> {
-    this.initWaxJS()
     this.users = []
     this.session = undefined
 
-    localStorage.setItem('ual-wax:autologin', 'null')
+    localStorage.removeItem(STORED_SESSION_KEY)
 
     console.log(`UAL-WAX: logout`)
   }
@@ -256,11 +259,11 @@ export class Wax extends Authenticator {
       return
     }
 
-    localStorage.setItem('ual-wax:autologin', JSON.stringify(login))
+    localStorage.setItem(STORED_SESSION_KEY, JSON.stringify(login))
     this.session = login
   }
 
-  private initWaxJS() {
+  private initWaxJS(userAccount?: string, pubKeys?: string[]) {
     this.wax = new WaxJS({
       rpcEndpoint: this.getEndpoint(),
       tryAutoLogin: this.shouldAutoLogin(),
@@ -268,6 +271,8 @@ export class Wax extends Authenticator {
       returnTempAccounts: this.returnTempAccounts || false,
       waxSigningURL: this.waxSigningURL,
       waxAutoSigningURL: this.waxAutoSigningURL,
+      userAccount,
+      pubKeys,
     })
   }
 
